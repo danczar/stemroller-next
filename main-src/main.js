@@ -38,7 +38,7 @@ async function handleSetProcessQueueItems(event, items) {
       type: 'info',
       title: 'Processing may take a while',
       message:
-        'On some computers, processing songs may take a long time. The app probably has not crashed unless it displays a "Failed" status for any of the songs you have chosen to split. If you\'ve waited longer than an hour and StemRoller still appears stuck, feel free to reach out and report the issue via Discord.',
+        'On some computers, processing songs may take a long time. The app probably has not crashed unless it displays a "Failed" status for any of the songs you have chosen to split. If you\'ve waited longer than an hour and StemRoller Next still appears stuck, feel free to reach out and report the issue.',
     })
     electronStore.set('warnedProcessingLongTime', true)
   }
@@ -93,7 +93,7 @@ async function handleOpenStemsPath(event, video) {
         type: 'warning',
         title: 'Folder Not Found',
         message:
-          "The folder containing this song's stems has been moved or deleted. If you would like to split this song again, simply select the original local file or drag-and-drop it onto the StemRoller window.",
+          "The folder containing this song's stems has been moved or deleted. If you would like to split this song again, simply select the original local file or drag-and-drop it onto the StemRoller Next window.",
       })
 
       return 'not-found'
@@ -112,7 +112,7 @@ async function handleOpenDonate() {
 }
 
 async function handleOpenSource() {
-  await shell.openExternal('https://www.stemroller.com/source')
+  await shell.openExternal('https://github.com/danczar/stemroller-next')
 }
 
 async function handleOpenChat() {
@@ -193,9 +193,9 @@ async function handleSetPyTorchBackend(event, backend) {
 let mainWindow = null
 function createWindow() {
   mainWindow = new BrowserWindow({
-    title: 'StemRoller',
+    title: 'StemRoller Next',
     show: false,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#020617',
     minWidth: 640,
     minHeight: 480,
     width: 800,
@@ -227,7 +227,7 @@ function createWindow() {
         buttons: ['Yes', 'No'],
         title: 'Confirm Quit',
         message:
-          "StemRoller is busy processing your songs. If you quit now, you'll lose any progress on the song currently being processed. Are you sure you want to interrupt the splitting process and quit StemRoller?",
+          "StemRoller Next is busy processing your songs. If you quit now, you'll lose any progress on the song currently being processed. Are you sure you want to interrupt the splitting process and quit StemRoller Next?",
       })
 
       if (response === 1) {
@@ -247,7 +247,7 @@ function createWindow() {
 async function checkForUpdates() {
   try {
     const remotePackageReq = await fetch(
-      'https://raw.githubusercontent.com/stemrollerapp/stemroller/main/package.json'
+      'https://raw.githubusercontent.com/danczar/stemroller-next/main/package.json'
     )
     const remotePackageJson = await remotePackageReq.json()
 
@@ -258,13 +258,13 @@ async function checkForUpdates() {
         type: 'info',
         buttons: ['Yes', 'No'],
         title: 'Update available!',
-        message: `An update is available! Would you like to visit the StemRoller website and download it now?\n\nYou are using: ${app.getVersion()}\nUpdated version: ${
+        message: `An update is available! Would you like to visit the StemRoller Next website and download it now?\n\nYou are using: ${app.getVersion()}\nUpdated version: ${
           remotePackageJson.version
         }.`,
       })
 
       if (response === 0) {
-        await shell.openExternal('https://www.stemroller.com')
+        await shell.openExternal('https://github.com/danczar/stemroller-next/releases')
       }
     }
   } catch (err) {
@@ -292,7 +292,7 @@ async function checkForMsvcRuntime() {
       buttons: ['Yes', 'No'],
       title: 'Please install Visual C++ Redistributable',
       message:
-        'This application requires the Microsoft Visual C++ Redistributable (x64) to be installed on your device. Would you like to download it now? (Please restart StemRoller once you have finished installing the Visual C++ Redistributable package).',
+        'This application requires the Microsoft Visual C++ Redistributable (x64) to be installed on your device. Would you like to download it now? (Please restart StemRoller Next once you have finished installing the Visual C++ Redistributable package).',
     })
 
     if (response === 0) {
@@ -318,9 +318,9 @@ async function main() {
     } else {
       dialog.showMessageBoxSync({
         type: 'info',
-        title: 'StemRoller is busy',
+        title: 'StemRoller Next is busy',
         message:
-          'An instance of StemRoller is currently busy. Please wait a few moments before attempting to launch StemRoller again, or reboot your device if this problem persists.',
+          'An instance of StemRoller Next is currently busy. Please wait a few moments before attempting to launch StemRoller Next again, or reboot your device if this problem persists.',
       })
     }
   })
@@ -378,7 +378,7 @@ if (process.env.NODE_ENV !== 'dev') {
     Menu.setApplicationMenu(
       Menu.buildFromTemplate([
         {
-          label: 'StemRoller',
+          label: 'StemRoller Next',
           submenu: [
             { label: 'Hide', accelerator: 'CmdOrCtrl+H', role: 'hide' },
             { label: 'Quit', accelerator: 'CmdOrCtrl+Q', role: 'quit' },

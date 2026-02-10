@@ -67,27 +67,27 @@
 </script>
 
 <div
-  class="absolute flex flex-col left-2 bottom-12 z-[9999] w-[28rem] px-4 py-3 drop-shadow-lg bg-slate-800 text-slate-300 rounded-md border-solid border border-slate-700"
+  class="absolute flex flex-col left-2 bottom-12 z-[9999] w-[28rem] px-5 py-4 bg-slate-900 text-slate-300 rounded-lg border border-slate-800"
 >
-  <div class="space-x-2 flex flex-row items-center mb-2">
-    <div class="w-6 h-6 grow-0 shrink-0">
+  <div class="space-x-2 flex flex-row items-center mb-3">
+    <div class="w-5 h-5 grow-0 shrink-0 text-slate-400">
       <CogIcon />
     </div>
 
-    <div class="font-bold text-xl grow-0 shrink-0">Preferences</div>
+    <div class="font-semibold text-lg text-slate-100 grow-0 shrink-0">Preferences</div>
 
     <div class="w-full grow-1 shrink-1"></div>
 
-    <button class="w-6 h-6 grow-0 shrink-0" on:click={onCloseClick}>
+    <button class="w-5 h-5 grow-0 shrink-0 text-slate-500 hover:text-slate-300 transition-colors" on:click={onCloseClick}>
       <XIcon />
     </button>
   </div>
 
-  <div class="text-lg font-bold mb-1">Stems output path</div>
+  <div class="text-sm font-semibold text-slate-200 mb-1">Stems output path</div>
 
-  <div class="flex flex-row space-x-2 mb-2">
+  <div class="flex flex-row space-x-2 mb-3">
     <div
-      class="flex-1 w-full min-w-0 border-solid border border-slate-700 bg-slate-900 text-slate-300 px-2 py-2 rounded-md truncate"
+      class="flex-1 w-full min-w-0 border border-slate-800 bg-slate-950 text-slate-400 px-3 py-2 rounded-lg text-sm truncate"
     >
       {outputPath || ''}
     </div>
@@ -98,11 +98,11 @@
     <input
       id="checkboxLocalFileOutputToContainingDir"
       type="checkbox"
-      class="w-4 h-4 grow-0 shrink-0"
+      class="w-4 h-4 grow-0 shrink-0 accent-violet-500"
       bind:checked={localFileOutputToContainingDir}
     />
 
-    <label for="checkboxLocalFileOutputToContainingDir" class="grow-0 shrink-0"
+    <label for="checkboxLocalFileOutputToContainingDir" class="grow-0 shrink-0 text-sm"
       >When splitting local files, use input file directory</label
     >
   </div>
@@ -111,65 +111,66 @@
     <input
       id="checkboxPrefixStemFilenameWithSongName"
       type="checkbox"
-      class="w-4 h-4 grow-0 shrink-0"
+      class="w-4 h-4 grow-0 shrink-0 accent-violet-500"
       bind:checked={prefixStemFilenameWithSongName}
     />
 
-    <label for="checkboxPrefixStemFilenameWithSongName" class="grow-0 shrink-0"
+    <label for="checkboxPrefixStemFilenameWithSongName" class="grow-0 shrink-0 text-sm"
       >Prefix stem name with song name</label
     >
   </div>
 
-  <div class="space-x-2 flex flex-row items-center justify-start mb-2">
+  <div class="space-x-2 flex flex-row items-center justify-start mb-3">
     <input
       id="checkboxPreserveOriginalAudio"
       type="checkbox"
-      class="w-4 h-4 grow-0 shrink-0"
+      class="w-4 h-4 grow-0 shrink-0 accent-violet-500"
       bind:checked={preserveOriginalAudio}
     />
 
-    <label for="checkboxPreserveOriginalAudio" class="grow-0 shrink-0"
+    <label for="checkboxPreserveOriginalAudio" class="grow-0 shrink-0 text-sm"
       >Preserve original audio</label
     >
   </div>
 
-  <div class="text-lg font-bold mb-1">Stems output format</div>
+  <div class="text-sm font-semibold text-slate-200 mb-1">Stems output format</div>
 
   <select
-    class="border-solid border border-slate-700 bg-slate-900 text-slate-300 focus:outline-none focus:ring focus:ring-cyan-300 px-2 py-1 mb-2 rounded-md"
+    class="border border-slate-800 bg-slate-950 text-slate-300 focus:outline-none focus:ring-2 focus:ring-violet-500/50 px-3 py-2 mb-3 rounded-lg text-sm"
     bind:value={outputFormat}
   >
-    <option value="wav" class="bg-slate-900 text-slate-300 px-2 py-1">WAV</option>
-    <option value="flac" class="bg-slate-900 text-slate-300 px-2 py-1">FLAC</option>
-    <option value="mp3" class="bg-slate-900 text-slate-300 px-2 py-1">MP3</option>
+    <option value="wav" class="bg-slate-950 text-slate-300">WAV</option>
+    <option value="flac" class="bg-slate-950 text-slate-300">FLAC</option>
+    <option value="mp3" class="bg-slate-950 text-slate-300">MP3</option>
+    <option value="aac" class="bg-slate-950 text-slate-300">AAC</option>
   </select>
 
-  <div class="text-lg font-bold mb-1">Demucs model</div>
+  <div class="text-sm font-semibold text-slate-200 mb-1">Separation model</div>
 
   <select
-    class="border-solid border border-slate-700 bg-slate-900 text-slate-300 focus:outline-none focus:ring focus:ring-cyan-300 px-2 py-1 mb-2 rounded-md"
+    class="border border-slate-800 bg-slate-950 text-slate-300 focus:outline-none focus:ring-2 focus:ring-violet-500/50 px-3 py-2 mb-3 rounded-lg text-sm"
     bind:value={modelName}
   >
-    <option value="htdemucs" class="bg-slate-900 text-slate-300 px-2 py-1">4-channel (Fast)</option>
-    <option value="htdemucs_ft" class="bg-slate-900 text-slate-300 px-2 py-1"
+    <option value="htdemucs" class="bg-slate-950 text-slate-300">4-channel (Fast)</option>
+    <option value="htdemucs_ft" class="bg-slate-950 text-slate-300"
       >4-channel (Finetuned)</option
     >
-    <option value="htdemucs_6s" class="bg-slate-900 text-slate-300 px-2 py-1"
+    <option value="htdemucs_6s" class="bg-slate-950 text-slate-300"
       >6-channel (Experimental)</option
     >
   </select>
 
-  <div class="text-lg font-bold mb-1">Backend</div>
+  <div class="text-sm font-semibold text-slate-200 mb-1">Backend</div>
 
-  <p class="mb-2 italic">Try &quot;Always use CPU&quot; if splitting fails on your device.</p>
+  <p class="mb-2 text-slate-500 text-xs">Try &quot;Always use CPU&quot; if splitting fails on your device.</p>
 
   <select
-    class="border-solid border border-slate-700 bg-slate-900 text-slate-300 focus:outline-none focus:ring focus:ring-cyan-300 px-2 py-1 rounded-md"
+    class="border border-slate-800 bg-slate-950 text-slate-300 focus:outline-none focus:ring-2 focus:ring-violet-500/50 px-3 py-2 rounded-lg text-sm"
     bind:value={pyTorchBackend}
   >
-    <option value="auto" class="bg-slate-900 text-slate-300 px-2 py-1"
+    <option value="auto" class="bg-slate-950 text-slate-300"
       >Use GPU (if available)</option
     >
-    <option value="cpu" class="bg-slate-900 text-slate-300 px-2 py-1">Always use CPU</option>
+    <option value="cpu" class="bg-slate-950 text-slate-300">Always use CPU</option>
   </select>
 </div>

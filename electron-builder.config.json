@@ -2,8 +2,8 @@
   "directories": {
     "buildResources": "electron-build-resources"
   },
-  "appId": "com.stemroller.stemroller",
-  "productName": "StemRoller",
+  "appId": "com.stemroller.stemroller-next",
+  "productName": "StemRoller Next",
   "files": [
     {
       "from": "build",
@@ -19,7 +19,7 @@
     }
   ],
   "mac": {
-    "target": [{ "target": "dir", "arch": ["x64"] }],
+    "target": [{ "target": "dir" }],
     "category": "public.app-category.music",
     "extraFiles": [
       {

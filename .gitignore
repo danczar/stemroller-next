@@ -8,8 +8,8 @@ node_modules
 .env.*
 !.env.example
 
-*-extra-files/ThirdPartyApps/demucs-cxfreeze/**
-!*-extra-files/ThirdPartyApps/demucs-cxfreeze/.gitkeep
+*-extra-files/ThirdPartyApps/demucs/**
+!*-extra-files/ThirdPartyApps/demucs/.gitkeep
 *-extra-files/ThirdPartyApps/ffmpeg/**
 !*-extra-files/ThirdPartyApps/ffmpeg/bin
 *-extra-files/ThirdPartyApps/ffmpeg/bin/**

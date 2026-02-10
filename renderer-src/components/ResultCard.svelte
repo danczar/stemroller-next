@@ -36,16 +36,16 @@
 </script>
 
 <div
-  class="overflow-hidden grow-0 shrink-0 flex flex-col p-4 space-y-2 rounded-md bg-slate-800 drop-shadow-lg"
+  class="overflow-hidden grow-0 shrink-0 flex flex-col p-4 space-y-2 rounded-lg bg-slate-900 border border-slate-800"
 >
   <div class="flex space-x-4 items-center">
-    <div class="relative grow-0 shrink-0 rounded-md">
+    <div class="relative grow-0 shrink-0 rounded-md overflow-hidden">
       <img class="h-16" src={`https://img.youtube.com/vi/${video.videoId}/mqdefault.jpg`} alt="" />
-      <div class="absolute bottom-0 right-0 px-2 bg-black/75">{video.length_text}</div>
+      <div class="absolute bottom-0 right-0 px-2 text-xs font-medium bg-black/75 text-slate-200">{video.length_text}</div>
     </div>
     <div class="overflow-hidden flex-1 flex flex-col justify-center leading-snug">
-      <div class="whitespace-nowrap overflow-hidden text-ellipsis font-semibold">{video.title}</div>
-      <div class="whitespace-nowrap overflow-hidden text-ellipsis text-slate-400">
+      <div class="whitespace-nowrap overflow-hidden text-ellipsis font-medium text-slate-100">{video.title}</div>
+      <div class="whitespace-nowrap overflow-hidden text-ellipsis text-slate-500 text-sm">
         {video.author.name}
       </div>
     </div>

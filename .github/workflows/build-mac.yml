@@ -6,8 +6,15 @@ on:
 
 jobs:
   build-mac:
-    name: Build StemRoller for macOS
-    runs-on: macos-latest
+    name: Build StemRoller Next for macOS (${{ matrix.arch }})
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        include:
+          - arch: x64
+            runner: macos-13
+          - arch: arm64
+            runner: macos-latest
     steps:
       - uses: actions/checkout@v3
         with:
@@ -17,12 +24,12 @@ jobs:
           node-version: 20
           cache: 'npm'
       - run: npm i -D
-      - run: npm run download-third-party-apps
-      - run: npm run build:mac
+      - run: STEMROLLER_TARGET_ARCH=${{ matrix.arch }} npm run download-third-party-apps
+      - run: npm run build:mac:${{ matrix.arch }}
       - uses: tyankatsu0105/read-package-version-actions@v1
         id: package-version
-      - run: ditto -c -k --sequesterRsrc --keepParent dist/mac/StemRoller.app stemroller-${{ steps.package-version.outputs.version }}-mac.zip
+      - run: ditto -c -k --sequesterRsrc --keepParent "dist/mac${{ matrix.arch == 'arm64' && '-arm64' || '' }}/StemRoller Next.app" stemroller-next-${{ steps.package-version.outputs.version }}-mac-${{ matrix.arch }}.zip
       - uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.package-version.outputs.version }}
-          files: stemroller-${{ steps.package-version.outputs.version }}-mac.zip
+          files: stemroller-next-${{ steps.package-version.outputs.version }}-mac-${{ matrix.arch }}.zip

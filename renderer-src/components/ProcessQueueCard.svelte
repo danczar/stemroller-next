@@ -58,7 +58,7 @@
 
 {#if status !== null}
   <div
-    class="overflow-hidden grow-0 shrink-0 w-60 flex flex-row px-4 p-2 space-x-4 items-center rounded-md text-left bg-slate-800 drop-shadow-md cursor-pointer"
+    class="overflow-hidden grow-0 shrink-0 w-60 flex flex-row px-4 p-2 space-x-4 items-center rounded-lg text-left bg-slate-900 border border-slate-800 cursor-pointer hover:bg-slate-800/50 transition-colors"
     disabled={!onClick}
     on:click={onClick}
     on:keydown={(event) => {
@@ -74,11 +74,11 @@
     tabindex="0"
   >
     {#if status.step === 'processing' || status.step === 'downloading'}
-      <div class="grow-0 shrink-0 w-5 h-5 text-slate-100 animate-pulse">
+      <div class="grow-0 shrink-0 w-5 h-5 text-violet-400 animate-pulse">
         <LoadingSpinnerIcon />
       </div>
     {:else if status.step === 'queued'}
-      <div class="grow-0 shrink-0 w-6 h-6 text-slate-500">
+      <div class="grow-0 shrink-0 w-6 h-6 text-slate-600">
         <CollectionIcon />
       </div>
     {:else if status.step === 'error'}
@@ -95,8 +95,8 @@
       </div>
     {/if}
     <div class="overflow-hidden flex-1 flex flex-col justify-center leading-snug">
-      <div class="whitespace-nowrap overflow-hidden text-ellipsis font-semibold">{video.title}</div>
-      <div class="whitespace-nowrap overflow-hidden text-ellipsis text-slate-400">
+      <div class="whitespace-nowrap overflow-hidden text-ellipsis font-medium text-slate-100">{video.title}</div>
+      <div class="whitespace-nowrap overflow-hidden text-ellipsis text-slate-500 text-sm">
         {#if cancelHovered}
           {#if status.step === 'processing' || status.step === 'downloading'}
             Cancel
@@ -121,7 +121,7 @@
       </div>
     </div>
     <button
-      class="grow-0 shrink-0 w-5 h-5 text-slate-500 hover:text-slate-400 transition:color"
+      class="grow-0 shrink-0 w-5 h-5 text-slate-600 hover:text-slate-400 transition-colors"
       on:click={handleCancelClicked}
       on:mouseenter={() => (cancelHovered = true)}
       on:mouseleave={() => (cancelHovered = false)}

@@ -49,8 +49,8 @@ function getPathToModels() {
 
 const PATH_TO_THIRD_PARTY_APPS = getPathToThirdPartyApps()
 const PATH_TO_MODELS = getPathToModels()
-const PATH_TO_DEMUCS = PATH_TO_THIRD_PARTY_APPS
-  ? path.join(PATH_TO_THIRD_PARTY_APPS, 'demucs-cxfreeze')
+const PATH_TO_DEMUCS_PYTHON = PATH_TO_THIRD_PARTY_APPS
+  ? path.join(PATH_TO_THIRD_PARTY_APPS, 'demucs', 'python', process.platform === 'win32' ? '' : 'bin')
   : null
 const PATH_TO_FFMPEG = PATH_TO_THIRD_PARTY_APPS
   ? path.join(PATH_TO_THIRD_PARTY_APPS, 'ffmpeg', 'bin')
@@ -58,7 +58,10 @@ const PATH_TO_FFMPEG = PATH_TO_THIRD_PARTY_APPS
 const PATH_TO_YT_DLP = PATH_TO_THIRD_PARTY_APPS
   ? path.join(PATH_TO_THIRD_PARTY_APPS, 'yt-dlp')
   : null
-const DEMUCS_EXE_NAME = PATH_TO_THIRD_PARTY_APPS ? 'demucs-cxfreeze' : 'demucs'
+const DEMUCS_EXE_NAME = PATH_TO_THIRD_PARTY_APPS
+  ? (process.platform === 'win32' ? 'python.exe' : 'python3')
+  : 'demucs'
+const DEMUCS_MODULE_ARGS = PATH_TO_THIRD_PARTY_APPS ? ['-m', 'demucs.separate'] : []
 const FFMPEG_EXE_NAME = 'ffmpeg'
 const YT_DLP_EXE_NAME = 'yt-dlp'
 const CHILD_PROCESS_ENV = {
@@ -68,13 +71,13 @@ const CHILD_PROCESS_ENV = {
 if (PATH_TO_THIRD_PARTY_APPS) {
   // Override the system's PATH with the path to our own bundled third-party apps
   CHILD_PROCESS_ENV.PATH =
-    PATH_TO_DEMUCS +
+    PATH_TO_DEMUCS_PYTHON +
     (process.platform === 'win32' ? ';' : ':') +
     PATH_TO_FFMPEG +
     (process.platform === 'win32' ? ';' : ':') +
     PATH_TO_YT_DLP
 }
-const TMP_PREFIX = 'StemRoller-'
+const TMP_PREFIX = 'StemRollerNext-'
 
 function getJobCount() {
   const MAX_NUM_JOBS = 4
@@ -172,7 +175,7 @@ async function createYtCacheDir() {
     return
   }
 
-  ytCacheDir = await fs.mkdtemp(path.join(os.tmpdir(), 'StemRoller-cache-'))
+  ytCacheDir = await fs.mkdtemp(path.join(os.tmpdir(), 'StemRollerNext-cache-'))
 }
 
 export async function deleteYtCacheDir() {
@@ -244,12 +247,13 @@ async function ensureFileExists(path) {
 }
 
 async function convertDemucsFiles({ videoId, tmpDir, filesList, filetype, compressionArgs }) {
-  console.log(`Converting files to format "${filetype}"`)
+  const extension = getFileExtension(filetype)
+  console.log(`Converting files to format "${filetype}" (.${extension})`)
 
   const result = []
   for (const oldFilename of filesList) {
     const parsedOldFilename = path.parse(oldFilename)
-    const newFilename = `${path.join(parsedOldFilename.dir, parsedOldFilename.name)}.${filetype}`
+    const newFilename = `${path.join(parsedOldFilename.dir, parsedOldFilename.name)}.${extension}`
 
     await spawnAndWait(
       videoId,
@@ -270,6 +274,11 @@ async function convertDemucsFiles({ videoId, tmpDir, filesList, filetype, compre
   return result
 }
 
+function getFileExtension(filetype) {
+  if (filetype === 'aac') return 'm4a'
+  return filetype
+}
+
 function getFfmpegCompressionArguments(filetype) {
   if (filetype === 'mp3') {
     return ['-q:a', '0']
@@ -277,6 +286,8 @@ function getFfmpegCompressionArguments(filetype) {
     return ['-compression_level', '5']
   } else if (filetype === 'wav') {
     return []
+  } else if (filetype === 'aac') {
+    return ['-c:a', 'aac', '-vbr', '5']
   }
   throw new Error(`Unrecognized filetype: ${filetype}`)
 }
@@ -284,6 +295,7 @@ function getFfmpegCompressionArguments(filetype) {
 async function _processVideo(video, tmpDir) {
   const demucsModelName = getModelName()
   const demucsStemsFiletype = getOutputFormat()
+  const demucsStemsExtension = getFileExtension(demucsStemsFiletype)
   const compressionArgs = getFfmpegCompressionArguments(demucsStemsFiletype)
   const needsPrefix = getPrefixStemFilenameWithSongName()
   const needsOriginal = getPreserveOriginalAudio()
@@ -324,7 +336,7 @@ async function _processVideo(video, tmpDir) {
   console.log(
     `Splitting video "${video.videoId}"; ${jobCount} jobs using model "${demucsModelName}"...`
   )
-  const demucsExeArgs = [mediaPath, '-n', demucsModelName, '-j', jobCount]
+  const demucsExeArgs = [...DEMUCS_MODULE_ARGS, mediaPath, '-n', demucsModelName, '-j', jobCount]
   if (getPyTorchBackend() === 'cpu') {
     console.log('Running with "-d cpu" to force CPU instead of CUDA')
     demucsExeArgs.push('-d', 'cpu')
@@ -363,7 +375,7 @@ async function _processVideo(video, tmpDir) {
         })
   updateProgressRaw(video.videoId, 0.97)
 
-  const instrumentalPath = path.join(tmpDir, `instrumental.${demucsStemsFiletype}`)
+  const instrumentalPath = path.join(tmpDir, `instrumental.${demucsStemsExtension}`)
   console.log(`Mixing down instrumental stems to "${instrumentalPath}"`)
   const ffmpegInstrumentalSourceFiles = []
   for (const filename of demucsWavFilesList) {
@@ -397,7 +409,7 @@ async function _processVideo(video, tmpDir) {
 
   let originalOutPath = null
   if (needsOriginal) {
-    originalOutPath = path.join(tmpDir, `original.${demucsStemsFiletype}`)
+    originalOutPath = path.join(tmpDir, `original.${demucsStemsExtension}`)
     await spawnAndWait(
       video.videoId,
       tmpDir,
@@ -425,18 +437,18 @@ async function _processVideo(video, tmpDir) {
     const baseName = path.parse(filename).name
     const outputPath = path.join(
       outputBasePath,
-      `${outputFilenamesPrefix}${baseName}.${demucsStemsFiletype}`
+      `${outputFilenamesPrefix}${baseName}.${demucsStemsExtension}`
     )
     await fs.copyFile(filename, outputPath)
   }
   await fs.copyFile(
     instrumentalPath,
-    path.join(outputBasePath, `${outputFilenamesPrefix}instrumental.${demucsStemsFiletype}`)
+    path.join(outputBasePath, `${outputFilenamesPrefix}instrumental.${demucsStemsExtension}`)
   )
   if (needsOriginal) {
     await fs.copyFile(
       originalOutPath,
-      path.join(outputBasePath, `${outputFilenamesPrefix}original.${demucsStemsFiletype}`)
+      path.join(outputBasePath, `${outputFilenamesPrefix}original.${demucsStemsExtension}`)
     )
   }
 
@@ -594,7 +606,7 @@ export const getOutputPath = () => {
       return outputPath
     }
   }
-  return path.join(os.homedir(), 'Music', 'StemRoller')
+  return path.join(os.homedir(), 'Music', 'StemRoller Next')
 }
 
 export const getModelName = () => {

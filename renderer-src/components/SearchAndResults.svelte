@@ -2,6 +2,7 @@
   import debounce from 'lodash.debounce'
   import ArrowUpIcon from '$icons/outline/ArrowUpIcon.svelte'
   import SearchIcon from '$icons/outline/SearchIcon.svelte'
+  import XCircleIcon from '$icons/outline/XCircleIcon.svelte'
   import CursorClickIcon from '$icons/outline/CursorClickIcon.svelte'
   import LoadingSpinnerIcon from '$icons/animated/LoadingSpinnerIcon.svelte'
   import ResultCard from '$components/ResultCard.svelte'
@@ -9,6 +10,7 @@
   export let onSplitClicked = null
   export let onFileSelected = null
 
+  let searchInput = null
   let hasQuery = false
   let status = null
   let videos = null
@@ -45,6 +47,21 @@
     }
   }
 
+  function clearSearch() {
+    debouncedSearch.cancel()
+    searchInput.value = ''
+    searchInput.focus()
+    status = null
+    videos = null
+    hasQuery = false
+  }
+
+  function handleKeydown(event) {
+    if (event.key === 'Escape' && hasQuery) {
+      clearSearch()
+    }
+  }
+
   function handleSelectFile() {
     const input = document.createElement('input')
     input.accept = 'audio/*'
@@ -67,32 +84,42 @@
   }
 </script>
 
-<div class="grow shrink overflow-hidden flex flex-col bg-slate-900 text-slate-100">
-  <div class="relative w-full flex-0 border-solid border-b border-slate-700">
+<div class="grow shrink overflow-hidden flex flex-col bg-slate-950 text-slate-50">
+  <div class="relative w-full flex-0 border-solid border-b border-slate-800/50">
     <input
-      class="w-full px-14 py-4 border-none outline-none bg-slate-900 font-bold"
+      bind:this={searchInput}
+      class="w-full px-14 py-4 border-none outline-none bg-slate-950 font-medium text-slate-50 placeholder-slate-500"
       placeholder="Search"
       on:input={handleSearchInput}
+      on:keydown={handleKeydown}
     />
     <div class="absolute top-4 left-4 w-6 h-6 text-slate-500 pointer-events-none">
       <SearchIcon />
     </div>
     {#if status !== null && status.step === 'loading'}
-      <div class="absolute top-4 right-4 w-5 h-5 text-slate-100 animate-pulse pointer-events-none">
+      <div class="absolute top-4 w-5 h-5 text-slate-400 animate-pulse pointer-events-none" class:right-4={!hasQuery} class:right-11={hasQuery}>
         <LoadingSpinnerIcon />
       </div>
     {/if}
+    {#if hasQuery}
+      <button
+        class="absolute top-4 right-4 w-5 h-5 text-slate-500 hover:text-slate-300 transition-colors"
+        on:click={clearSearch}
+      >
+        <XCircleIcon />
+      </button>
+    {/if}
   </div>
 
-  <div class="grow shrink overflow-x-hidden overflow-y-auto flex flex-col p-6 space-y-6">
+  <div class="grow shrink overflow-x-hidden overflow-y-auto flex flex-col p-6 space-y-4">
     {#if !hasQuery}
-      <div class="w-6 h-6 self-center animate-bounce text-slate-500 pointer-events-none">
+      <div class="w-6 h-6 self-center animate-bounce text-slate-600 pointer-events-none">
         <ArrowUpIcon />
       </div>
-      <p class="m-4 text-slate-400 text-center">
+      <p class="m-4 text-slate-500 text-center">
         Type any song title in the search bar above,<br />or
         <button
-          class="text-cyan-500 underline"
+          class="text-violet-400 hover:text-violet-300 underline underline-offset-2 transition-colors"
           on:click={handleSelectFile}
           on:mouseenter={() => (dndTipVisible = true)}
           on:mouseleave={() => (dndTipVisible = false)}>select a local file</button
@@ -100,7 +127,7 @@
       </p>
 
       <div
-        class={`mx-auto max-w-md flex flex-row space-x-2 px-4 py-3 drop-shadow-lg bg-slate-800 text-slate-300 rounded-md border-solid border border-slate-700 transition-opacity ${
+        class={`mx-auto max-w-md flex flex-row space-x-2 px-4 py-3 bg-slate-900 text-slate-400 rounded-lg border border-slate-800 transition-opacity ${
           dndTipVisible ? 'opacity-100' : 'opacity-0'
         }`}
       >
@@ -108,7 +135,7 @@
           <CursorClickIcon />
         </div>
         <p>
-          <span class="font-bold">Pro tip</span>: you can also drag local files from {dndFileExplorerName}
+          <span class="font-semibold text-slate-300">Pro tip</span>: you can also drag local files from {dndFileExplorerName}
           and drop them onto this window to split them.
         </p>
       </div>
@@ -117,9 +144,9 @@
         <ResultCard {video} {onSplitClicked} />
       {/each}
     {:else if (!videos || videos.length === 0) && status === null}
-      <p class="m-4 text-slate-400 text-center">No video results available.</p>
+      <p class="m-4 text-slate-500 text-center">No video results available.</p>
     {:else if status !== null && status.step === 'error'}
-      <p class="m-4 text-slate-400 text-center">
+      <p class="m-4 text-slate-500 text-center">
         An error occurred. Please make sure you&apos;re connected to the internet and try again.
       </p>
     {/if}

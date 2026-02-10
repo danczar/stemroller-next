@@ -1,20 +1,20 @@
-# StemRoller
+# StemRoller Next
 
-StemRoller is the first free app which enables you to separate vocal and instrumental stems from any song with a single click! StemRoller uses Facebook's state-of-the-art [Demucs](https://github.com/facebookresearch/demucs) algorithm for demixing songs and integrates search results from YouTube.
+StemRoller Next is the next generation of StemRoller, the free app that lets you separate vocal and instrumental stems from any song with a single click. Built on Facebook's [Demucs](https://github.com/facebookresearch/demucs) algorithm with integrated YouTube search.
+
+### What's new in StemRoller Next
+
+- **Apple Silicon native support** — runs natively on arm64 Macs with MPS GPU acceleration
+- **No more frozen binaries** — uses a bundled standalone Python runtime with pip-installed Demucs, making updates and maintenance easier
+- **Universal architecture** — builds for macOS x64, macOS arm64, and Windows from a single codebase
 
 Simply type the name/artist of any song into the search bar and click the **Split** button that appears in the results! You'll need to wait several minutes for splitting to complete. Once stems have been extracted, you'll see an **Open** button next to the song - click that to access your stems!
-
-_We also have a [Discord server](https://www.stemroller.com/chat) with update announcements and support_.
-
-## Quick Start
-
-Using StemRoller couldn't be easier - just head to the [StemRoller website](https://stemroller.com) or the [releases page](https://github.com/stemrollerapp/stemroller/releases) and download the latest version! That bundle includes everything you need to split stems. If, however, you want to get involved in StemRoller development, read on...
 
 ## Install Dependencies
 
 ```
-git clone https://github.com/stemrollerapp/stemroller.git
-cd stemroller
+git clone https://github.com/danczar/stemroller-next.git
+cd stemroller-next
 npm i -D
 ```
 
@@ -22,10 +22,11 @@ npm i -D
 
 `npm run download-third-party-apps`
 
+This downloads a standalone Python runtime, installs Demucs via pip, and fetches ffmpeg and yt-dlp. On macOS, set `STEMROLLER_TARGET_ARCH=arm64` or `STEMROLLER_TARGET_ARCH=x64` to target a specific architecture.
+
 ### Linux (Not officially supported)
 
-Install `ffmpeg` globally using your preferred package manager, and install `demucs` and `yt-dlp` globally with `pip`.
-If you get "Couldn't find appropriate backend" errors, try installing `libsox-dev`.
+TBD
 
 ## Run in Development Mode
 
@@ -43,8 +44,12 @@ If you get "Couldn't find appropriate backend" errors, try installing `libsox-de
 
 ### macOS
 
-`npm run build:mac`
+```
+npm run build:mac:arm64   # Apple Silicon
+npm run build:mac:x64     # Intel
+npm run build:mac         # current architecture
+```
 
 ## License
 
-Your choice of Public Domain (Unlicense) or MIT No Attribution - please read the [LICENSE](https://github.com/stemrollerapp/stemroller/blob/main/LICENSE) file for more information.
+Your choice of Public Domain (Unlicense) or MIT No Attribution - please read the [LICENSE](https://github.com/danczar/stemroller-next/blob/main/LICENSE) file for more information.
